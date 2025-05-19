@@ -11,5 +11,8 @@ const apiClient = axios.create({
 export const api = {
     getHealth() {
         return apiClient.get('/health');
+    },
+    getTest() {
+        return apiClient.get('/test');
     }
 };

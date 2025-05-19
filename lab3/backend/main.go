@@ -68,18 +68,18 @@ func setupRoutes() *http.ServeMux {
 		w.Write([]byte(`{"status":"ok"}`))
 	})
 
-	mux.HandleFunc("/api/data", func(w http.ResponseWriter, r *http.Request) {
-		// Проверка клиентского сертификата
-		if len(r.TLS.PeerCertificates) == 0 {
-			http.Error(w, "Client certificate required", http.StatusForbidden)
+	mux.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
 
-		clientCN := r.TLS.PeerCertificates[0].Subject.CommonName
-		log.Printf("Request from client: %s", clientCN)
+		if r.Header.Get("Test") == "TestSample" {
+			w.Header().Set("Test", "TestSampleBackend")
+		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"message":"Secure data","client":"` + clientCN + `"}`))
+		w.Write([]byte(`{"proxy":"pass"}`))
 	})
 
 	return mux
